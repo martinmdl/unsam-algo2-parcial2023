@@ -15,11 +15,13 @@ class EquipoDecorado (
     private var estaAlquilado: Boolean = false
 ) : Equipo {
 
-    override fun validarAlquiler(dj: Dj) { if(!estaAlquilado) throw BusinessException("Ya está alquilado") }
+    override fun validarAlquiler(dj: Dj) {
+        if(estaAlquilado) throw BusinessException("Ya está alquilado")
+        dj.alquilar(this)
+    }
 
     override fun alquilarA(dj: Dj) {
         validarAlquiler(dj)
-        dj.alquilar(this)
         estaAlquilado = true
     }
 
@@ -66,7 +68,7 @@ class EquipoSofisticado(private val expRequerida: Int, equipo: Equipo) : EquipoD
         equipo.validarAlquiler(dj)
     }
 
-    private fun expSuficiente(dj: Dj): Boolean = dj.aniosDeExperiencia() <= expRequerida
+    private fun expSuficiente(dj: Dj): Boolean = dj.aniosDeExperiencia() >= expRequerida
 }
 
 class EquipoConRegistro(equipo: Equipo) : EquipoDecoradorBase(equipo) {

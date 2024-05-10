@@ -5,16 +5,11 @@ import java.time.LocalDate
 class Dj (
     private var saldo: Double,
     private var fechaInicio: LocalDate,
-    var dedicacionPlena: Boolean,
-){
+    var dedicacionPlena: Boolean
+) {
 
-    fun puedeAlquilar(equipo: Equipo): Boolean = equipo.costoAlquiler() <= saldo
+    private fun puedeAlquilar(equipo: Equipo): Boolean = equipo.costoAlquiler() <= saldo
 
-//    fun alquilar(equipo: Equipo) {
-//        if (puedeAlquilar(equipo)) {
-//            saldo -= equipo.costoAlquiler()
-//        }
-//    }
     fun alquilar(equipo: Equipo) {
         if (!puedeAlquilar(equipo)) throw BusinessException("No tiene suficiente saldo")
         saldo -= equipo.costoAlquiler()
@@ -25,5 +20,4 @@ class Dj (
     }
 
     fun aniosDeExperiencia(): Int = LocalDate.now().year - fechaInicio.year
-
 }
