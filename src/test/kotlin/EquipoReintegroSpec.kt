@@ -6,53 +6,25 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 
-class EquipoBuilder(private var equipo: Equipo) {
-
-    fun dedicacionPlena(): EquipoBuilder {
-        equipo = EquipoDedicacionPlena(equipo)
-        return this
-    }
-
-    fun reintegro(coefReintegro: Double): EquipoBuilder {
-        equipo = EquipoReintegro(coefReintegro, equipo)
-        return this
-    }
-
-    fun sofisticado(expRequerida: Int): EquipoBuilder {
-        equipo = EquipoSofisticado(expRequerida, equipo)
-        return this
-    }
-
-    fun registro(): EquipoBuilder {
-        equipo = EquipoConRegistro(equipo)
-        return this
-    }
-
-    fun build(): Equipo {
-        if (equipo.costoAlquiler() < 0 && !equipo.alquilado()) {
-            throw BusinessException("El costo tiene que ser mayor a cero y/o no estar alquilado")
-        }
-        return equipo
-    }
-}
-
-class EquipoSpec : DescribeSpec({
+class EquipoReintegroSpec : DescribeSpec({
     isolationMode = IsolationMode.InstancePerLeaf
 
     describe("Dado un equipo sin decorar") {
 
         val pipo = Dj(
             10.0,
-            LocalDate.of(2015,1,27),
-            true
-        )
-        val marto = Dj(
-            100.0,
-            LocalDate.of(2015,1,27),
+            LocalDate.of(2015, 1, 27),
             true
         )
 
-        val equipo = EquipoBuilder(EquipoDecorado(100.0, false))
+        val marto = Dj(
+            100.0,
+            LocalDate.of(2015, 1, 27),
+            true
+        )
+
+        val equipo = EquipoBuilder(EquipoDecorado(10000.0, false))
+            .reintegro(0.1) // reintegra 10%
             .build()
 
         it("Habrá una excepción si el Dj tiene saldo insuficiente") {
@@ -65,12 +37,14 @@ class EquipoSpec : DescribeSpec({
             val e = assertThrows<BusinessException> { equipo.alquilarA(pipo) }
             "Ya está alquilado" shouldBe e.message
         }
-        it("El equipo es alquilado"){
+
+        it("El equipo es alquilado") {
             pipo.aumentarSaldo(100.0)
             equipo.alquilarA(pipo)
             equipo.alquilado() shouldBe true
         }
     }
+})
 
 //    describe("Dado un equipo") {
 //
@@ -84,4 +58,3 @@ class EquipoSpec : DescribeSpec({
 //        it("tu hermana") {
 //
 //        }
-})
