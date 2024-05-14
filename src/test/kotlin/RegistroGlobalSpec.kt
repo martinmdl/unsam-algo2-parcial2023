@@ -3,7 +3,6 @@
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 
 class RegistroGlobalSpec : DescribeSpec({
