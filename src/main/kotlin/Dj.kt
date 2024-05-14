@@ -1,7 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 class Dj (
     var saldo: Double,

@@ -18,7 +18,7 @@ class EquipoRegistroSpec : DescribeSpec({
         )
 
         val marto = Dj(
-            200.0,
+            300.0,
             LocalDate.of(2023, 1, 27),
             false
         )
@@ -27,33 +27,27 @@ class EquipoRegistroSpec : DescribeSpec({
             .registro()
             .build()
 
-        val equipo2 = EquipoBuilder(EquipoDecorado(100.0))
+        val equipo2 = EquipoBuilder(EquipoDecorado(200.0))
             .registro()
             .build()
 
-        val equipo3 = EquipoBuilder(EquipoDecorado(300.0))
-            .registro()
-            .build()
-
-        it("Un Dj alquila por primera vez") {
+        it("No existe registro de un Dj que nunca alquilo"){
             RegistroGlobal.getRegistro(pipo) shouldBe 0
-            equipo1.alquilarA(pipo)
-            equipo1.alquilado() shouldBe true
-            RegistroGlobal.getRegistro(pipo) shouldBe 1
-
         }
 
-        it("Un Dj alquila 2 equipos") {
-            RegistroGlobal.getRegistro(marto) shouldBe 0
+        it("El registro de un Dj que alquilo un equipo por primera vez") {
+            equipo1.alquilarA(pipo)
+            RegistroGlobal.getRegistro(pipo) shouldBe 1
+        }
+
+        it("El registro de un Dj que alquilo 2 equipos") {
             equipo1.alquilarA(marto)
             equipo2.alquilarA(marto)
-            equipo1.alquilado() shouldBe true
-            equipo2.alquilado() shouldBe true
             RegistroGlobal.getRegistro(marto) shouldBe 2
         }
 
-        it("Un Dj quizo alquilar y no pudo, no se registrará") {
-            assertThrows<BusinessException> { equipo3.alquilarA(marto) }
+        it("Un registro de un Dj que no pudo alquilar") {
+            assertThrows<BusinessException> { equipo2.alquilarA(pipo) }
             RegistroGlobal.getRegistro(marto) shouldBe 0
         }
     }

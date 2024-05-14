@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 class EquipoBuilder(private var equipo: Equipo) {
 
     fun dedicacionPlena(): EquipoBuilder {

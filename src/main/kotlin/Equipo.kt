@@ -12,7 +12,7 @@ interface Equipo {
 // CONCRETE COMPONENT
 class EquipoDecorado (
     private var costoAlquiler: Double,
-    var estaAlquilado: Boolean = false
+    private var estaAlquilado: Boolean = false
 ) : Equipo {
 
     override fun validarAlquiler(dj: Dj) {
@@ -47,11 +47,6 @@ abstract class EquipoDecoradorBase(val equipo: Equipo) : Equipo {
 }
 
 // CONCRETE DECORATORS
-
-// Problema: al modificar validarAlquiler() nunca lanza la excepción.
-// - Corroboré orden de los métodos -> estaban ordenados y seguía el problema
-// - Cambié la delegación de "equipo" a "super" -> seguía el problema
-// Corrección: modifiqué alquilarA() y se arregló
 class EquipoDedicacionPlena(equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
     override fun alquilarA(dj: Dj) {
@@ -60,8 +55,6 @@ class EquipoDedicacionPlena(equipo: Equipo) : EquipoDecoradorBase(equipo) {
     }
 }
 
-// Problema: https://groups.google.com/g/algo2-unsam/c/_Ii1b0jcgE0
-// Corrección: no modificar costoAlquiler(), sino alquilarA()
 class EquipoReintegro(private val porcentajeReintegro: Double, equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
     override fun alquilarA(dj: Dj) {
@@ -72,10 +65,6 @@ class EquipoReintegro(private val porcentajeReintegro: Double, equipo: Equipo) :
     private fun reintegro(): Double = equipo.costoAlquiler() * porcentajeReintegro
 }
 
-// Problema: al modificar validarAlquiler() nunca lanza la excepción.
-// - Corroboré orden de los métodos -> estaban ordenados y seguía el problema
-// - Probé dj.aniosDeExperiencia() en DjSpec.kt -> funcionaba y seguía el problema
-// Corrección: modifiqué alquilarA() y se arregló
 class EquipoSofisticado(private val expRequerida: Int, equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
     override fun alquilarA(dj: Dj) {
@@ -86,10 +75,7 @@ class EquipoSofisticado(private val expRequerida: Int, equipo: Equipo) : EquipoD
     private fun expSuficiente(dj: Dj): Boolean = dj.aniosDeExperiencia() >= expRequerida
 }
 
-
 class EquipoConRegistro(equipo: Equipo) : EquipoDecoradorBase(equipo) {
-
-//    private val registro: MutableMap<Dj, Int> = mutableMapOf()
 
     override fun alquilarA(dj: Dj) {
         equipo.alquilarA(dj)

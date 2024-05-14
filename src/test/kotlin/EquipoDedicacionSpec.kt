@@ -27,14 +27,18 @@ class EquipoDedicacionSpec : DescribeSpec({
             .dedicacionPlena()
             .build()
 
-        it("Dj con dedicación plena, puede alquilar") {
+        it("Un equipo puede ser alquilado por un Dj con dedicacion plena") {
             equipo.alquilarA(marto)
             equipo.alquilado() shouldBe true
         }
 
-        it("Dj no puede alquilar si no tiene dedicación plena") {
+        it("Un equipo no puede ser alquilado por un Dj sin dedicacion plena") {
             val e = assertThrows<BusinessException> { equipo.alquilarA(pipo) }
             "El DJ no tiene dedicación plena" shouldBe e.message
+        }
+
+        it("Un equipo no puede ser alquilado por un Dj sin dedicacion plena") {
+            assertThrows<BusinessException> { equipo.alquilarA(pipo) }
             equipo.alquilado() shouldBe false
         }
     }
