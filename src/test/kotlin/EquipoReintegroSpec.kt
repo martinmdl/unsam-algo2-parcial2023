@@ -24,7 +24,7 @@ class EquipoReintegroSpec : DescribeSpec({
         )
 
         val equipo = EquipoBuilder(EquipoDecorado(100.0))
-            .reintegro(0.1) // reintegra 10%
+            .reintegro(0.1)
             .build()
 
         it("Un equipo es alquilado y reintegra el 10% de su valor") {

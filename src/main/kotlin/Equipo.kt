@@ -37,8 +37,6 @@ abstract class EquipoDecoradorBase(val equipo: Equipo) : Equipo {
 
     override fun validarAlquiler(dj: Dj) = equipo.validarAlquiler(dj)
 
-    override fun alquilarA(dj: Dj) = equipo.alquilarA(dj)
-
     override fun alquilado(): Boolean = equipo.alquilado()
 
     override fun costoAlquiler(): Double = equipo.costoAlquiler()

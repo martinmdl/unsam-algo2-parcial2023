@@ -84,7 +84,7 @@ class EquipoDecoracionMaxSpec : DescribeSpec({
             equipo.alquilado() shouldBe true
         }
 
-        it("Un equipo puede ser alquilado, recive reintegro") {
+        it("Un equipo puede ser alquilado, recibe reintegro") {
             equipo.alquilarA(marto)
             marto.saldo shouldBe 100
         }

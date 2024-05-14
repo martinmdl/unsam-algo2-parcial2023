@@ -31,7 +31,7 @@ class EquipoRegistroSpec : DescribeSpec({
             .registro()
             .build()
 
-        it("No existe registro de un Dj que nunca alquilo"){
+        it("No existe registro de un Dj que nunca alquilo") {
             RegistroGlobal.getRegistro(pipo) shouldBe 0
         }
 
