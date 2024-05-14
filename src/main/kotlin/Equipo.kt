@@ -30,9 +30,6 @@ class EquipoDecorado (
     override fun costoAlquiler(): Double = costoAlquiler
 
     override fun establecerCosto(costo: Double) { costoAlquiler = costo }
-
-    // Necesario para testear EquipoConRegistro por la consigna imprecisa
-    fun vencerAlquiler() { estaAlquilado = false }
 }
 
 // BASE DECORATOR
@@ -92,13 +89,10 @@ class EquipoSofisticado(private val expRequerida: Int, equipo: Equipo) : EquipoD
 
 class EquipoConRegistro(equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
-    private val registro: MutableMap<Dj, Int> = mutableMapOf()
+//    private val registro: MutableMap<Dj, Int> = mutableMapOf()
 
     override fun alquilarA(dj: Dj) {
         equipo.alquilarA(dj)
-        registro[dj] = registro.getOrPut(dj) { 0 } + 1
+        RegistroGlobal.registrar(dj)
     }
-
-    // Necesario para testear
-    fun registro(dj: Dj): Int? = registro[dj]
 }
