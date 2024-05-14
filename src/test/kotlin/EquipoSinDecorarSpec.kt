@@ -23,15 +23,16 @@ class EquipoSinDecorarSpec : DescribeSpec({
             true
         )
 
-        val equipo = EquipoBuilder(EquipoDecorado(100.0, false))
+        val equipo = EquipoBuilder(EquipoDecorado(100.0))
             .build()
 
-        it("Habrá una excepción si el Dj tiene saldo insuficiente") {
+        it("Dj no puede alquilar si no tiene suficiente saldo") {
             val e = assertThrows<BusinessException> { equipo.alquilarA(pipo) }
             "No tiene suficiente saldo" shouldBe e.message
+            equipo.alquilado() shouldBe false
         }
 
-        it("Equipo no es alquilado por un Dj (ya esta alquilado)") {
+        it("Dj no puede alquilar un equipo ocupado") {
             equipo.alquilarA(marto)
             val e = assertThrows<BusinessException> { equipo.alquilarA(pipo) }
             "Ya está alquilado" shouldBe e.message

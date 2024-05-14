@@ -6,15 +6,15 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 
-class EquipoReintegroSpec : DescribeSpec({
+class EquipoDecoracionMaxSpec : DescribeSpec({
     isolationMode = IsolationMode.InstancePerLeaf
 
-    describe("Dado un equipo con reintegro") {
+    describe("Dado un equipo con todos los decoradores") {
 
         val pipo = Dj(
-            10.0,
-            LocalDate.of(2015, 1, 27),
-            true
+            100.0,
+            LocalDate.of(2023, 1, 27),
+            false
         )
 
         val marto = Dj(
@@ -24,17 +24,21 @@ class EquipoReintegroSpec : DescribeSpec({
         )
 
         val equipo = EquipoBuilder(EquipoDecorado(100.0))
-            .reintegro(0.1) // reintegra 10%
+            .dedicacionPlena()
+            .reintegro(0.1)
+            .sofisticado(3)
+            .registro()
             .build()
 
-        it("Equipo es alquilado y reintegra el 10% de su valor") {
+        it("Dj con dedicación plena, puede alquilar") {
             equipo.alquilarA(marto)
-            marto.saldo shouldBe 10
+            equipo.alquilado() shouldBe true
         }
 
-        it("Un Dj no accede al reintegro si no tiene saldo para alquilar") {
+        it("Dj no puede alquilar si no tiene dedicación plena") {
             val e = assertThrows<BusinessException> { equipo.alquilarA(pipo) }
-            "No tiene suficiente saldo" shouldBe e.message
+            "El DJ no tiene dedicación plena" shouldBe e.message
+            equipo.alquilado() shouldBe false
         }
     }
 })

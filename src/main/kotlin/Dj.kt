@@ -1,9 +1,10 @@
 @file:Suppress("SpellCheckingInspection")
 
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 class Dj (
-    private var saldo: Double,
+    var saldo: Double,
     private var fechaInicio: LocalDate,
     var dedicacionPlena: Boolean
 ) {

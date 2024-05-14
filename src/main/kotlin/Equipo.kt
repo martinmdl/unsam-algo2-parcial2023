@@ -12,7 +12,7 @@ interface Equipo {
 // CONCRETE COMPONENT
 class EquipoDecorado (
     private var costoAlquiler: Double,
-    private var estaAlquilado: Boolean = false
+    var estaAlquilado: Boolean = false
 ) : Equipo {
 
     override fun validarAlquiler(dj: Dj) {
@@ -30,6 +30,9 @@ class EquipoDecorado (
     override fun costoAlquiler(): Double = costoAlquiler
 
     override fun establecerCosto(costo: Double) { costoAlquiler = costo }
+
+    // Necesario para testear EquipoConRegistro por la consigna imprecisa
+    fun vencerAlquiler() { estaAlquilado = false }
 }
 
 // BASE DECORATOR
@@ -47,29 +50,45 @@ abstract class EquipoDecoradorBase(val equipo: Equipo) : Equipo {
 }
 
 // CONCRETE DECORATORS
+
+// Problema: al modificar validarAlquiler() nunca lanza la excepción.
+// - Corroboré orden de los métodos -> estaban ordenados y seguía el problema
+// - Cambié la delegación de "equipo" a "super" -> seguía el problema
+// Corrección: modifiqué alquilarA() y se arregló
 class EquipoDedicacionPlena(equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
-    override fun validarAlquiler(dj: Dj) {
+    override fun alquilarA(dj: Dj) {
         if(!dj.dedicacionPlena) throw BusinessException("El DJ no tiene dedicación plena")
-        equipo.validarAlquiler(dj)
+        equipo.alquilarA(dj)
     }
 }
 
-class EquipoReintegro(private val coefReintegro: Double, equipo: Equipo) : EquipoDecoradorBase(equipo) {
+// Problema: https://groups.google.com/g/algo2-unsam/c/_Ii1b0jcgE0
+// Corrección: no modificar costoAlquiler(), sino alquilarA()
+class EquipoReintegro(private val porcentajeReintegro: Double, equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
-    companion object { const val ENTERO = 1 }
-    override fun costoAlquiler(): Double = equipo.costoAlquiler() * (ENTERO - coefReintegro)
+    override fun alquilarA(dj: Dj) {
+        equipo.alquilarA(dj)
+        dj.aumentarSaldo(reintegro())
+    }
+
+    private fun reintegro(): Double = equipo.costoAlquiler() * porcentajeReintegro
 }
 
+// Problema: al modificar validarAlquiler() nunca lanza la excepción.
+// - Corroboré orden de los métodos -> estaban ordenados y seguía el problema
+// - Probé dj.aniosDeExperiencia() en DjSpec.kt -> funcionaba y seguía el problema
+// Corrección: modifiqué alquilarA() y se arregló
 class EquipoSofisticado(private val expRequerida: Int, equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
-    override fun validarAlquiler(dj: Dj) {
+    override fun alquilarA(dj: Dj) {
         if(!expSuficiente(dj)) throw BusinessException("El DJ no tiene suficiente experiencia")
-        equipo.validarAlquiler(dj)
+        equipo.alquilarA(dj)
     }
 
     private fun expSuficiente(dj: Dj): Boolean = dj.aniosDeExperiencia() >= expRequerida
 }
+
 
 class EquipoConRegistro(equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
@@ -79,4 +98,7 @@ class EquipoConRegistro(equipo: Equipo) : EquipoDecoradorBase(equipo) {
         equipo.alquilarA(dj)
         registro[dj] = registro.getOrPut(dj) { 0 } + 1
     }
+
+    // Necesario para testear
+    fun registro(dj: Dj): Int? = registro[dj]
 }
