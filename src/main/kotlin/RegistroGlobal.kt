@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 object RegistroGlobal {
 
     private val registro: MutableMap<Dj, Int> = mutableMapOf()
