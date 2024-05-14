@@ -27,14 +27,19 @@ class EquipoSofisticadoSpec : DescribeSpec({
             .sofisticado(3)
             .build()
 
-        it("Dj con suficiente experiencia puede alquilar") {
+        it("Un equipo es alquilado por un Dj con suficiente experiencia") {
             equipo.alquilarA(marto)
             equipo.alquilado() shouldBe true
         }
 
-        it("Dj no puede alquilar si no tiene suficiente experiencia") {
+        it("Un equipo no puede es alquilado por un Dj con suficiente experiencia") {
             val e = assertThrows<BusinessException> { equipo.alquilarA(pipo) }
             "El DJ no tiene suficiente experiencia" shouldBe e.message
+        }
+
+        it("Un equipo no es alquilado por un Dj con suficiente experiencia") {
+            assertThrows<BusinessException> { equipo.alquilarA(pipo) }
+            equipo.alquilado() shouldBe false
         }
     }
 })

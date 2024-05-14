@@ -24,17 +24,17 @@ class EquipoReintegroSpec : DescribeSpec({
         )
 
         val equipo = EquipoBuilder(EquipoDecorado(100.0))
-            .reintegro(0.1) // reintegra 10%
+            .reintegro(0.1)
             .build()
 
-        it("Equipo es alquilado y reintegra el 10% de su valor") {
+        it("Un equipo es alquilado y reintegra el 10% de su valor") {
             equipo.alquilarA(marto)
             marto.saldo shouldBe 10
         }
 
-        it("Un Dj no accede al reintegro si no tiene saldo para alquilar") {
-            val e = assertThrows<BusinessException> { equipo.alquilarA(pipo) }
-            "No tiene suficiente saldo" shouldBe e.message
+        it("Un equipo no reintegra si no puede ser alquilado") {
+            assertThrows<BusinessException> { equipo.alquilarA(pipo) }
+            pipo.saldo shouldBe 10
         }
     }
 })

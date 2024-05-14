@@ -11,43 +11,86 @@ class EquipoDecoracionMaxSpec : DescribeSpec({
 
     describe("Dado un equipo con todos los decoradores") {
 
-        val pipo = Dj(
-            50.0,
-            LocalDate.of(2023, 1, 27),
-            false
-        )
-
         val marto = Dj(
             200.0,
             LocalDate.of(2015, 1, 27),
             true
         )
 
+        val cris = Dj(
+            100.0,
+            LocalDate.of(2015, 1, 27),
+            true
+        )
+
+        val pipo = Dj(
+            200.0,
+            LocalDate.of(2015, 1, 27),
+            false
+        )
+
+        val guille = Dj(
+            200.0,
+            LocalDate.of(2024, 1, 27),
+            true
+        )
+
         val equipo = EquipoBuilder(EquipoDecorado(200.0))
             .dedicacionPlena()
-            .reintegro(0.5)
             .sofisticado(3)
+            .reintegro(0.5)
             .registro()
             .build()
 
-        it("Dj no puede alquilar por no tener dedicación plena, ni suficiente saldo, ni ser sofisticado") {
+        val equipoDistinto = EquipoBuilder(EquipoDecorado(200.0))
+            .registro()
+            .reintegro(0.5)
+            .sofisticado(3)
+            .dedicacionPlena()
+            .build()
 
-            val e = assertThrows<BusinessException> { equipo.alquilarA(pipo) }
-            println(e.message)
-
-            pipo.aumentarSaldo(200.0)
-            assertThrows<BusinessException> { equipo.alquilarA(pipo) }
-
-            RegistroGlobal.getRegistro(pipo) shouldBe 0
-            pipo.saldo shouldBe 250
+        it("Un equipo no puede ser alquilado por un Dj sin saldo suficiente"){
+            val e = assertThrows<BusinessException> { equipo.alquilarA(cris) }
+            "No tiene suficiente saldo" shouldBe e.message
         }
 
-        it("Dj puede alquilar ya que cumple todas las condiciones, esto le otorga un reintegro y se registra") {
+        it("Un equipo no puede ser alquilado por un Dj sin dedicacion plena"){
+            val e = assertThrows<BusinessException> { equipo.alquilarA(pipo) }
+            "El DJ no tiene dedicación plena" shouldBe e.message
+        }
 
-            RegistroGlobal.getRegistro(marto) shouldBe 0
+        it("Un equipo no puede ser alquilado por un Dj sin experiencia suficiente"){
+            val e = assertThrows<BusinessException> { equipo.alquilarA(guille) }
+            "El DJ no tiene suficiente experiencia" shouldBe e.message
+        }
+
+        it("Un equipo distinto no puede ser alquilado por un Dj sin saldo suficiente"){
+            val e = assertThrows<BusinessException> { equipoDistinto.alquilarA(cris) }
+            "No tiene suficiente saldo" shouldBe e.message
+        }
+
+        it("Un equipo distinto no puede ser alquilado por un Dj sin dedicacion plena"){
+            val e = assertThrows<BusinessException> { equipoDistinto.alquilarA(pipo) }
+            "El DJ no tiene dedicación plena" shouldBe e.message
+        }
+
+        it("Un equipo distinto no puede ser alquilado por un Dj sin experiencia suficiente"){
+            val e = assertThrows<BusinessException> { equipoDistinto.alquilarA(guille) }
+            "El DJ no tiene suficiente experiencia" shouldBe e.message
+        }
+
+        it("Un equipo puede ser alquilado") {
             equipo.alquilarA(marto)
+            equipo.alquilado() shouldBe true
+        }
 
+        it("Un equipo puede ser alquilado, recibe reintegro") {
+            equipo.alquilarA(marto)
             marto.saldo shouldBe 100
+        }
+
+        it("Un equipo puede ser alquilado, aumenta su registro") {
+            equipo.alquilarA(marto)
             RegistroGlobal.getRegistro(marto) shouldBe 1
         }
     }
