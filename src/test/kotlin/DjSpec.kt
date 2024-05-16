@@ -39,12 +39,12 @@ class DjSpec : DescribeSpec({
             marto.aniosDeExperiencia() shouldBe 9
         }
 
-        it("Dj puede alquilar, paga el costo de alquiler"){
+        it("Dj puede alquilar, paga el costo de alquiler") {
             marto.alquilar(equipo)
             marto.saldo shouldBe 0
         }
 
-        it("Dj no puede alquilar, mantiene su saldo"){
+        it("Dj no puede alquilar, mantiene su saldo") {
             assertThrows<BusinessException> { pipo.alquilar(equipo) }
             pipo.saldo shouldBe 100
         }
