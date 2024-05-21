@@ -1,5 +1,8 @@
 @file:Suppress("SpellCheckingInspection")
 
+import ar.edu.unsam.algo2.musicar.BusinessException
+import ar.edu.unsam.algo2.musicar.Dj
+import ar.edu.unsam.algo2.musicar.EquipoDecorado
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe

@@ -1,5 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 
+package ar.edu.unsam.algo2.musicar
+
 // COMPONENT
 interface Equipo {
     fun validarAlquiler(dj: Dj)
@@ -17,12 +19,13 @@ class EquipoDecorado (
 
     override fun validarAlquiler(dj: Dj) {
         if(estaAlquilado) throw BusinessException("Ya está alquilado")
-        dj.alquilar(this)
+        if (!dj.puedeAlquilar(this)) throw BusinessException("No tiene suficiente saldo")
     }
 
     override fun alquilarA(dj: Dj) {
         validarAlquiler(dj)
         estaAlquilado = true
+        dj.saldo -= this.costoAlquiler()
     }
 
     override fun alquilado(): Boolean = estaAlquilado
@@ -56,8 +59,8 @@ class EquipoDedicacionPlena(equipo: Equipo) : EquipoDecoradorBase(equipo) {
 class EquipoReintegro(private val porcentajeReintegro: Double, equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
     override fun alquilarA(dj: Dj) {
-        equipo.alquilarA(dj)
         dj.aumentarSaldo(reintegro())
+        equipo.alquilarA(dj)
     }
 
     private fun reintegro(): Double = equipo.costoAlquiler() * porcentajeReintegro

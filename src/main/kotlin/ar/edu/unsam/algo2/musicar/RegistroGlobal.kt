@@ -1,5 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 
+package ar.edu.unsam.algo2.musicar
+
 object RegistroGlobal {
 
     private val registro: MutableMap<Dj, Int> = mutableMapOf()

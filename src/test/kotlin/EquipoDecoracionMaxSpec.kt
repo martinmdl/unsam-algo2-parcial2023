@@ -1,7 +1,12 @@
 @file:Suppress("SpellCheckingInspection")
 
+import ar.edu.unsam.algo2.musicar.BusinessException
+import ar.edu.unsam.algo2.musicar.Dj
+import ar.edu.unsam.algo2.musicar.EquipoDecorado
+import ar.edu.unsam.algo2.musicar.RegistroGlobal
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -35,7 +40,7 @@ class EquipoDecoracionMaxSpec : DescribeSpec({
             true
         )
 
-        val equipo = EquipoBuilder(EquipoDecorado(200.0))
+        val equipo = EquipoBuilder()
             .dedicacionPlena()
             .sofisticado(3)
             .reintegro(0.5)
@@ -59,10 +64,6 @@ class EquipoDecoracionMaxSpec : DescribeSpec({
             "El DJ no tiene dedicación plena" shouldBe e.message
         }
 
-        it("Un equipo no puede ser alquilado por un Dj sin experiencia suficiente"){
-            val e = assertThrows<BusinessException> { equipo.alquilarA(guille) }
-            "El DJ no tiene suficiente experiencia" shouldBe e.message
-        }
 
         it("Un equipo distinto no puede ser alquilado por un Dj sin saldo suficiente"){
             val e = assertThrows<BusinessException> { equipoDistinto.alquilarA(cris) }
@@ -74,9 +75,18 @@ class EquipoDecoracionMaxSpec : DescribeSpec({
             "El DJ no tiene dedicación plena" shouldBe e.message
         }
 
-        it("Un equipo distinto no puede ser alquilado por un Dj sin experiencia suficiente"){
-            val e = assertThrows<BusinessException> { equipoDistinto.alquilarA(guille) }
-            "El DJ no tiene suficiente experiencia" shouldBe e.message
+        describe("para guille") {
+
+            it("Un equipo no puede ser alquilado por un Dj sin experiencia suficiente") {
+                val e = assertThrows<BusinessException> { equipo.alquilarA(guille) }
+                "El DJ no tiene suficiente experiencia" shouldBe e.message
+                guille.saldo shouldBe 200.0 plusOrMinus 0.1
+            }
+            it("Un equipo distinto no puede ser alquilado por un Dj sin experiencia suficiente") {
+                val e = assertThrows<BusinessException> { equipoDistinto.alquilarA(guille) }
+                "El DJ no tiene suficiente experiencia" shouldBe e.message
+                guille.saldo shouldBe 200.0 plusOrMinus 0.1
+            }
         }
 
         it("Un equipo puede ser alquilado") {

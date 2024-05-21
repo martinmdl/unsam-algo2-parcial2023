@@ -1,4 +1,5 @@
 @file:Suppress("SpellCheckingInspection")
+package ar.edu.unsam.algo2.musicar
 
 import java.time.LocalDate
 
@@ -8,11 +9,10 @@ class Dj (
     var dedicacionPlena: Boolean
 ) {
 
-    private fun puedeAlquilar(equipo: Equipo): Boolean = equipo.costoAlquiler() <= saldo
+    fun puedeAlquilar(equipo: Equipo): Boolean = equipo.costoAlquiler() <= saldo
 
     fun alquilar(equipo: Equipo) {
-        if (!puedeAlquilar(equipo)) throw BusinessException("No tiene suficiente saldo")
-        saldo -= equipo.costoAlquiler()
+        equipo.alquilarA(this)
     }
 
     fun aumentarSaldo(valor: Double) {

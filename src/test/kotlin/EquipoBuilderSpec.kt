@@ -1,11 +1,12 @@
 @file:Suppress("SpellCheckingInspection")
 
+import ar.edu.unsam.algo2.musicar.*
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.assertThrows
 
-class EquipoBuilder(private var equipo: Equipo) {
+class EquipoBuilder(private var equipo: Equipo = EquipoDecorado(200.0)) {
 
     fun dedicacionPlena(): EquipoBuilder {
         equipo = EquipoDedicacionPlena(equipo)
