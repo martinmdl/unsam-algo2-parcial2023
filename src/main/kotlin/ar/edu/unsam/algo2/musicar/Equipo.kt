@@ -59,8 +59,8 @@ class EquipoDedicacionPlena(equipo: Equipo) : EquipoDecoradorBase(equipo) {
 class EquipoReintegro(private val porcentajeReintegro: Double, equipo: Equipo) : EquipoDecoradorBase(equipo) {
 
     override fun alquilarA(dj: Dj) {
-        dj.aumentarSaldo(reintegro())
         equipo.alquilarA(dj)
+        dj.aumentarSaldo(reintegro())
     }
 
     private fun reintegro(): Double = equipo.costoAlquiler() * porcentajeReintegro
