@@ -10,15 +10,30 @@ class Programa(
     var ratingUltimasCincoEmisiones: MutableList<Int>,
 ) {
 
-    private var restriccion: Restriccion = SinRestriccion()
+    private var restricciones: MutableList<Restriccion> = mutableListOf()
 
-    fun cambiarRestriccion(restriccionNueva: Restriccion) {
-        restriccion = restriccionNueva
+    fun agregarRestricciones(restriccionesNuevas: MutableList<Restriccion>) {
+        restricciones.addAll(restriccionesNuevas)
     }
 
-    fun estaEnRegla(): Boolean = restriccion.puedeEmitir(this)
+    fun ejecutarRevision(canal: Canal) {
+        val primeraRestriccion = restricciones.find { it.puedeEmitir(this) }
+        primeraRestriccion?.ejecutarRevision(this, canal)
+    }
 
     fun getPrimerConductor(): Conductor = conductores.first()
 
 }
+
+enum class DiaSemana {
+    LUNES,
+    MARTES,
+    MIERCOLES,
+    JUEVES,
+    VIERNES,
+    SABADO,
+    DOMINGO
+}
+
+data class Conductor(val nombre: String, val email: String)
 

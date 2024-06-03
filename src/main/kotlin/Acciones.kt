@@ -2,28 +2,18 @@
 
 import kotlin.random.Random
 
-interface Accion {
-    fun execute(): Programa
+abstract class Accion {
+    private val observers: MutableSet<ObservadorNuevosProgramas> = mutableSetOf()
+    fun agregarObs(obs: ObservadorNuevosProgramas) { observers.add(obs) }
+    fun eliminarObs(obs: ObservadorNuevosProgramas) { observers.remove(obs) }
+
+    abstract fun execute(canal: Canal)
 }
 
-class Nula : Accion { // Null Object Pattern
-    override fun execute(): Programa {
-        return Programa(
-            titulo = "",
-            conductores = mutableSetOf(),
-            presupuestoBase = 0,
-            sponsor = "",
-            diaTransmision = DiaSemana.LUNES,
-            duracion = 0,
-            ratingUltimasCincoEmisiones = mutableListOf(),
-        )
-    }
-}
+class Dividir(private val programa: Programa) : Accion() {
 
-class Dividir(private val programa: Programa) : Accion {
-
-    override fun execute(): Programa {
-        return Programa(
+    override fun execute(canal: Canal) {
+        val programa1 = Programa(
             titulo = this.dividirTitulo(),
             conductores = this.dividirConductores(),
             presupuestoBase = this.dividirPresupuesto(),
@@ -32,6 +22,8 @@ class Dividir(private val programa: Programa) : Accion {
             duracion = this.dividirDuracion(),
             ratingUltimasCincoEmisiones = mutableListOf(),
         )
+
+        canal.agregarPrograma(programa1)
     }
 
     companion object { private const val MITAD = 0.5 }
@@ -65,89 +57,58 @@ class Dividir(private val programa: Programa) : Accion {
             "Programa sin nombre"
         }
     }
-
 }
 
-class Eliminar(private val programa: Programa) : Accion {
+class Eliminar(private val programa: Programa) : Accion() {
 
-//    override fun execute(): Programa {
-//       return Programa(
-//            titulo = "Los Simpsons",
-//            conductores = mutableSetOf(Conductor("Homero")),
-//            presupuestoBase = 2333,
-//            sponsor = "UP",
-//            diaTransmision = DiaSemana.DOMINGO,
-//            duracion = 60,
-//            ratingUltimasCincoEmisiones = mutableListOf(),
-//       )
-//    }
-
-    override fun execute(): Programa {
+    override fun execute(canal: Canal) {
         programa.titulo = "Los Simpsons"
-        programa.conductores = mutableSetOf(Conductor("Homero"))
+        programa.conductores = mutableSetOf(Conductor("Homero", "homero@gmail.com"))
         programa.presupuestoBase = 2333
         programa.sponsor = "UP"
         programa.diaTransmision = DiaSemana.DOMINGO
         programa.duracion = 60
         programa.ratingUltimasCincoEmisiones = mutableListOf()
-
-        return programa
     }
 }
 
-class Fusionar(private val programa: Programa, private val grilla: MutableList<Programa>) : Accion {
+class Fusionar(private val programa: Programa) : Accion() {
 
-//    override fun execute(): Programa {
-//
-//        grilla.add(grilla.first())
-//
-//        return Programa(
-//            titulo = this.tituloRandom(),
-//            conductores = this.primerosConductores(grilla),
-//            presupuestoBase = this.menorPresupeusto(grilla),
-//            sponsor = this.sponsorRandom(grilla),
-//            diaTransmision = programa.diaTransmision,
-//            duracion = this.duracionTotal(grilla),
-//            ratingUltimasCincoEmisiones = mutableListOf(),
-//        )
-//    }
+    override fun execute(canal: Canal) {
 
-    private val siguiente: Int = grilla.indexOf(programa) + 1
-
-    override fun execute(): Programa {
-
-        grilla.add(grilla.first())
+        val siguiente: Int = canal.grilla.indexOf(programa) + 1
+        canal.grilla.add(canal.grilla.first())
 
         programa.titulo = this.tituloRandom()
-        programa.conductores = this.primerosConductores(grilla)
-        programa.presupuestoBase = this.menorPresupeusto(grilla)
-        programa.sponsor = this.sponsorRandom(grilla)
+        programa.conductores = this.primerosConductores(canal.grilla, siguiente)
+        programa.presupuestoBase = this.menorPresupeusto(canal.grilla, siguiente)
+        programa.sponsor = this.sponsorRandom(canal.grilla, siguiente)
         programa.diaTransmision = programa.diaTransmision
-        programa.duracion = this.duracionTotal(grilla)
+        programa.duracion = this.duracionTotal(canal.grilla, siguiente)
         programa.ratingUltimasCincoEmisiones = mutableListOf()
 
-        return programa
+        canal.grilla.removeAt(siguiente)
     }
 
     private fun tituloRandom(): String =
         if(Random.nextBoolean()) "Impacto total" else "Un buen día"
 
-    private fun primerosConductores(grillaAux: MutableList<Programa>): MutableSet<Conductor> =
+    private fun primerosConductores(grillaAux: MutableList<Programa>, siguiente: Int): MutableSet<Conductor> =
         mutableSetOf(programa.getPrimerConductor(), grillaAux[siguiente].getPrimerConductor())
 
-    private fun menorPresupeusto(grillaAux: MutableList<Programa>): Int =
+    private fun menorPresupeusto(grillaAux: MutableList<Programa>, siguiente: Int): Int =
         minOf(programa.presupuestoBase, grillaAux[siguiente].presupuestoBase)
 
-    private fun sponsorRandom(grillaAux: MutableList<Programa>): String =
+    private fun sponsorRandom(grillaAux: MutableList<Programa>, siguiente: Int): String =
         if(Random.nextBoolean()) programa.sponsor else grillaAux[siguiente].sponsor
 
-    private fun duracionTotal(grillaAux: MutableList<Programa>): Int =
+    private fun duracionTotal(grillaAux: MutableList<Programa>, siguiente: Int): Int =
         programa.duracion + grillaAux[siguiente].duracion
 }
 
-class AdelantarUnDia(private val programa: Programa) : Accion {
+class AdelantarUnDia(private val programa: Programa) : Accion() {
 
-    override fun execute(): Programa {
+    override fun execute(canal: Canal) {
 
         val dias = listOf(
             DiaSemana.LUNES,
@@ -162,7 +123,6 @@ class AdelantarUnDia(private val programa: Programa) : Accion {
 
         val siguiente = dias.indexOf(programa.diaTransmision) + 1
         programa.diaTransmision = dias[siguiente]
-        return programa
     }
 }
 
