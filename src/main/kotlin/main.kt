@@ -6,7 +6,7 @@ class BusinessException(message: String) : Exception()
 // #### PUNTO 3 ####
 class Canal(val grilla: MutableList<Programa>) {
 
-    private val observersNuevoPrograma = mutableSetOf<ObserverNuevoPrograma>()
+    private val observersNuevoPrograma = mutableSetOf<ObserverPrograma>()
 
     private val programasEnRevision = mutableSetOf<Programa>()
 
@@ -113,13 +113,13 @@ class PresupuestoExcedido(private val presupuestoMax: Double) : Restriccion() {
 }
 
 // #### PUNTO 1.5 ####
-class RestriccionCombinadaOr(private val restricciones: MutableSet<Restriccion>) : Restriccion() {
+class CombinadaOr(private val restricciones: MutableSet<Restriccion>) : Restriccion() {
 
     override fun cumple(programa: Programa): Boolean = restricciones.any { it.cumple(programa) }
 }
 
 // #### PUNTO 1.6 ####
-class RestriccionCombinadaAnd(private val restricciones: MutableSet<Restriccion>) : Restriccion() {
+class CombinadaAnd(private val restricciones: MutableSet<Restriccion>) : Restriccion() {
 
     override fun cumple(programa: Programa): Boolean = restricciones.all { it.cumple(programa) }
 }
@@ -271,14 +271,14 @@ class AdelantarUnDia : Accion {
 }
 
 // #### PUNTO 3.4 ####
-interface ObserverNuevoPrograma { fun ejecutar(programa: Programa) }
+interface ObserverPrograma { fun ejecutar(programa: Programa) }
 
 // #### PUNTO 3.4.1 ####
 interface MailSender { fun sendMail(mail: Mail) }
 
 data class Mail(val from: String, val to: String, val subject: String, val message: String)
 
-class NotificarConductores(private val mailSender: MailSender) : ObserverNuevoPrograma {
+class NotificarConductores(private val mailSender: MailSender) : ObserverPrograma {
 
     override fun ejecutar(programa: Programa) {
         val emails = programa.conductores.joinToString(", ") { it.email }
@@ -296,7 +296,7 @@ interface SMSSender { fun sendSMS(sms: SMS) }
 
 data class SMS(val to: String, val message: String)
 
-class PresupuestoAlto(private val smsSender: SMSSender) : ObserverNuevoPrograma {
+class PresupuestoAlto(private val smsSender: SMSSender) : ObserverPrograma {
 
     companion object { private const val PRESUPUESTO_LIMITE = 100000 }
 
@@ -311,27 +311,10 @@ class PresupuestoAlto(private val smsSender: SMSSender) : ObserverNuevoPrograma 
 }
 
 // #### PUNTO 3.4.3 ####
-class EliminarDeRevision(private val canal: Canal) : ObserverNuevoPrograma {
+class EliminarDeRevision(private val canal: Canal) : ObserverPrograma {
 
     override fun ejecutar(programa: Programa) {
         canal.sincListRevision()
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
